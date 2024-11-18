@@ -2,8 +2,9 @@ package task;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Ellipse;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -25,14 +26,17 @@ public class Main extends Application {
     private Scene createScene() {
         Pane pane = new Pane();
 
-        // левый верхний
-        Ellipse ellipse1 = EllipseDrawer.drawEllipseFromTopLeft(50, 50, 200, 100);
+        int width = 600;
+        int height = 400;
 
-        // цент и полуоси
-        Ellipse ellipse2 = EllipseDrawer.drawEllipseFromCenter(300, 300, 150, 80);
+        WritableImage image = new WritableImage(width, height);
 
-        pane.getChildren().addAll(ellipse1, ellipse2);
+        EllipseDrawer.drawEllipseFromTopLeft(image, 50, 50, 200, 100, javafx.scene.paint.Color.BLUE);
+        EllipseDrawer.drawEllipseFromCenter(image, 300, 300, 150, 80, javafx.scene.paint.Color.RED);
 
-        return new Scene(pane, 600, 400);
+        ImageView imageView = new ImageView(image);
+        pane.getChildren().add(imageView);
+
+        return new Scene(pane, width, height);
     }
 }
