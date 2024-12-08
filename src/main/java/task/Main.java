@@ -26,13 +26,14 @@ public class Main extends Application {
     private Scene createScene() {
         Pane pane = new Pane();
 
-        int width = 600;
-        int height = 400;
+        int width = 800;
+        int height = 800;
 
         WritableImage image = new WritableImage(width, height);
 
         EllipseDrawer.drawEllipseFromTopLeft(image, 50, 50, 200, 100, javafx.scene.paint.Color.BLUE);
         EllipseDrawer.drawEllipseFromCenter(image, 300, 300, 150, 80, javafx.scene.paint.Color.RED);
+        EllipseDrawer.drawEllipseFromCenter(image, 300, 300, 50,100, javafx.scene.paint.Color.GREEN);
 
         ImageView imageView = new ImageView(image);
         pane.getChildren().add(imageView);

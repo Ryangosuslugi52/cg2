@@ -6,58 +6,65 @@ import javafx.scene.paint.Color;
 
 public class EllipseDrawer {
 
-    public static void drawEllipseFromTopLeft(WritableImage image, double x, double y, double width, double height, Color color) {
-        double centerX = x + width / 2;
-        double centerY = y + height / 2;
-        double a = width / 2;
-        double b = height / 2;
+    public static void drawEllipseFromTopLeft(WritableImage image, int x, int y, int width, int height, Color color) {
+        int centerX = x + width / 2;
+        int centerY = y + height / 2;
+        int a = width / 2;
+        int b = height / 2;
         drawEllipse(image, centerX, centerY, a, b, color);
     }
 
-    public static void drawEllipseFromCenter(WritableImage image, double centerX, double centerY, double a, double b, Color color) {
+    public static void drawEllipseFromCenter(WritableImage image, int centerX, int centerY, int a, int b, Color color) {
         drawEllipse(image, centerX, centerY, a, b, color);
     }
 
-    private static void drawEllipse(WritableImage image, double centerX, double centerY, double a, double b, Color color) {
+    private static void drawEllipse(WritableImage image, int centerX, int centerY, int a, int b, Color color) {
         PixelWriter pixelWriter = image.getPixelWriter();
 
-        double a2 = a * a;
-        double b2 = b * b;
-        double x = 0;
-        double y = b;
+        int a2 = a * a;
+        int b2 = b * b;
+        int twoA2 = 2 * a2;
+        int twoB2 = 2 * b2;
 
-        // первая часть
-        double d1 = b2 - a2 * b + 0.25 * a2;
-        while (b2 * x < a2 * y) {
+        int x = 0;
+        int y = b;
+
+        int error = b2 - a2 * b + a2 / 4;
+        int dx = 0;
+        int dy = twoA2 * y;
+
+        while (dx < dy) {
             plotPoints(pixelWriter, centerX, centerY, x, y, color);
-            if (d1 < 0) {
-                d1 += b2 * (2 * x + 3);
+            if (error < 0) {
+                error += dx + b2;
             } else {
-                d1 += b2 * (2 * x + 3) + a2 * (-2 * y + 2);
                 y--;
+                dy -= twoA2;
+                error += dx + b2 - dy;
             }
             x++;
+            dx += twoB2;
         }
 
-        // вторая часть
-        double d2 = b2 * (x + 0.5) * (x + 0.5) + a2 * (y - 1) * (y - 1) - a2 * b2;
+        error = b2 * x * x + a2 * (y - 1) * (y - 1) - a2 * b2;
         while (y >= 0) {
             plotPoints(pixelWriter, centerX, centerY, x, y, color);
-            if (d2 > 0) {
-                d2 += a2 * (-2 * y + 3);
+            if (error > 0) {
+                error -= dy - a2;
             } else {
-                d2 += b2 * (2 * x + 2) + a2 * (-2 * y + 3);
                 x++;
+                dx += twoB2;
+                error += dx - dy + a2;
             }
             y--;
+            dy -= twoA2;
         }
     }
 
-    private static void plotPoints(PixelWriter pixelWriter, double centerX, double centerY, double x, double y, Color color) {
-        // заливка
-        pixelWriter.setColor((int) (centerX + x), (int) (centerY + y), color);
-        pixelWriter.setColor((int) (centerX - x), (int) (centerY + y), color);
-        pixelWriter.setColor((int) (centerX + x), (int) (centerY - y), color);
-        pixelWriter.setColor((int) (centerX - x), (int) (centerY - y), color);
+    private static void plotPoints(PixelWriter pixelWriter, int centerX, int centerY, int x, int y, Color color) {
+        pixelWriter.setColor(centerX + x, centerY + y, color);
+        pixelWriter.setColor(centerX - x, centerY + y, color);
+        pixelWriter.setColor(centerX + x, centerY - y, color);
+        pixelWriter.setColor(centerX - x, centerY - y, color);
     }
 }
